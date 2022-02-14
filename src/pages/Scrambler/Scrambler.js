@@ -61,58 +61,64 @@ const getGameInfo = async () => {
     const matchingWords = getMatchingWords(masterWord, result);
     matchingWords[2].push(masterWord);
 
+    const words = sortedWords(matchingWords);
+
+    const board = words.reduce((acc, group) => {
+      if (group.length) {
+        const length = group[0].length;
+        acc.push({
+          length,
+          solved: false,
+          words: group.map(word => {
+            return {
+              solved: false,
+              word,
+              letters: word.split('').map(letter => {
+                return {
+                  letter,
+                  solved: false
+                }
+              })
+            }
+          })
+        })
+      }
+      return acc;
+    }, []);
+
     return {
       letters: createRandomArray(masterWord.split(''), masterWord.length),
-      words: sortedWords(matchingWords)
+      board
     };
   });
-}
+};
 
-// TODO: Come up with better data structure and rewrite
-
-const board = [
-  {
-    length: 4,
-    solved: false,
-    words: [
-      {
-        solved: false,
-        letters: [
-          {
-            letter: 'C',
-            filled: false
-          },
-          {
-            letter: 'O',
-            filled: false
-          },
-          {
-            letter: 'I',
-            filled: false
-          }          
-        ]
-      }
-    ]
-  }
-]
-
+// TODO: Points system
+// TODO: Shuffle button
+// TODO: Clear tray button
+// TODO: Click and drag to reorder in tray
 
 const Scrambler = () => {
   const [letters, setLetters] = useState([]);
   const [trayLetters, setTrayLetters] = useState([]);
   const [board, setBoard] = useState([]);
-  const [guessed, setGuessed] = useState([]);
+  const [error, setError] = useState('');
+  const [isWinner, setIsWinner] = useState(false);
 
   useEffect(() => {
     const setupGame = async () => {
       const game = await getGameInfo();
       setLetters(game.letters);
-      setBoard(game.words);
-      setGuessed(game.words);
+      setBoard(game.board);
     }
     setupGame();
   }, []);
 
+  const clearError = () => {
+    if (error) {
+      setError('');
+    }
+  }
 
   const playAgain = () => {
     window.location.reload();
@@ -128,33 +134,73 @@ const Scrambler = () => {
   }
 
   const moveToTray = ltrInd => {
+    clearError();
     addLetter(letters[ltrInd], trayLetters, setTrayLetters);
     removeLetter(ltrInd, letters.slice(), setLetters);
   }
 
   const removeFromTray = ltrInd => {
+    clearError();
     addLetter(trayLetters[ltrInd], letters, setLetters);
     removeLetter(ltrInd, trayLetters.slice(), setTrayLetters);
   }
 
+  const shuffleLetters = () => {
+    setLetters(createRandomArray(letters, letters.length));
+  }
+
+  const clearTray = () => {
+    setLetters([...letters, ...trayLetters]);
+    setTrayLetters([]);
+  }
+
   const tryWord = () => {
+    clearError();
     const word = trayLetters.join('');
-    const arrayInd = {
-      4: 0,
-      5: 1,
-      6: 2
-    };
-    const listInd = arrayInd[word.length];
-    const wordArray = board[listInd];
-    const wordIndex = wordArray.indexOf(word);
-    if (wordIndex >= 0) {
-      const newGuessed = guessed.slice();
-      console.log(newGuessed[listInd][wordIndex]);
-      newGuessed[listInd][wordIndex] = newGuessed[listInd][wordIndex].replace(/[a-zA-Z]/g, '?');
-      setGuessed(newGuessed);
-      console.log('matched!', newGuessed);
+    let isCorrect = false;
+
+    const newBoard = board.map(wordGroup => {
+      if (wordGroup.length === word.length) {
+        const words = wordGroup.words.map(wordData => {
+          if (word.toUpperCase() === wordData.word.toUpperCase()) {
+            isCorrect = true;
+            return {
+              ...wordData,
+              solved: true,
+              letters: wordData.letters.map(x => ({ ...x, solved: true }))
+            }
+          }
+          return wordData;
+        });
+        return { ...wordGroup, words };
+      }
+      return wordGroup;
+    });
+    setBoard(newBoard);
+    console.log(board);
+
+    if (isCorrect) {
+      clearTray();
+      
+      let winnerCheck = true;
+      for (let i=0; i<newBoard.length; i++) {
+        const wordGroup = newBoard[i];
+        for (let j=0; j<wordGroup.words.length; j++) {
+          const word = wordGroup.words[j];
+          if (!word.solved) {
+            winnerCheck = false;
+            break;
+          }
+        }
+      }
+      if (winnerCheck) {
+        setIsWinner(true);
+      }
+    } else {
+      // TODO: Is in word list? Is too short? etc
+      setError('Nope');
     }
-    console.log('trying', word, wordArray, board);
+
   }
 
   return (
@@ -163,39 +209,19 @@ const Scrambler = () => {
       <div className="board-wrap">
         <div className="board board-col">
           <div className="column">
-            {board && board.length && board[0].map((word, i) => {
-              return (
-                <div className="row" key={`row-${i}`}>
-                  {word.split('').map((ltr, j) => {
-                    const wasGuessed = guessed && guessed.length && guessed[0][i][j] === '?';
-                    return (
+            {board && board.length && board.map(item => {
+              const { words, length } = item;
+              return words && words.length && words.map(({ letters }, i) => {
+                return (
+                  <div className="row" key={`row-${length}-${i}`}>
+                    {letters.map(({ letter, solved }, j) => (
                       <div className="blank" key={`blank-${j}`}>
-                        {wasGuessed && <>{ltr}</>}
+                        {solved && <>{letter}</>}
                       </div>
-                    )
-                  })}
-                </div>
-              )
-            })}
-          </div>
-          <div className="column">
-            {board && board.length && board[1].map((word, i) => {
-              return (
-                <div className="row" key={`row-${i}`}>
-                  {word.split('').map((ltr, j) => (
-                    <div className="blank" key={`blank-${j}`}></div>
-                  ))}
-                </div>
-              )
-            })}
-            {board && board.length && board[2].map((word, i) => {
-              return (
-                <div className="row" key={`row-${i}`}>
-                  {word.split('').map((ltr, j) => (
-                    <div className="blank" key={`blank-${j}`}></div>
-                  ))}
-                </div>
-              )
+                    ))}
+                  </div>
+                )
+              });
             })}
           </div>
         </div>
@@ -209,6 +235,7 @@ const Scrambler = () => {
               ))}
             </div>
             <button type="button" className="submit-btn" onClick={tryWord}>Go</button>
+            <button type="button" className="submit-btn" onClick={clearTray}>C</button>
           </div>
           <div className="row">
             <div className="tray bottom-tray">
@@ -218,36 +245,21 @@ const Scrambler = () => {
                 </div>
               ))}              
             </div>
+            <button type="button" className="submit-btn" onClick={shuffleLetters}>%</button>
           </div>
         </div>
-        {/* <div className="board">
-          {boardData.map((row, i) => {
-            return (
-              <div className="row" key={`row-${i}`}>
-                {row.map((item, j) => {
-                  return (
-                    <div key={`cell-${i}-${j}`} className={`cell ${item.color}`}>{item.letter}</div>
-                  )
-                })}
-              </div>
-            )
-          })}
+        <div className="board">
           {!isWinner ? (
-            <>
-              <div className="row">
-                <form onSubmit={makeGuess}>
-                  <input maxLength="5" type="text" value={guess} onChange={updateGuess} />
-                  <button disabled={guess.length < 5} type="submit">Submit</button>
-                </form>
-              </div>
-              <div className="error">
-                {error}
-              </div>
-            </>
+            <div className="error">
+              {error}
+            </div>
           ) : (
-            <button type="button" onClick={playAgain}>Play Again</button>
+            <>
+              <h4>WINNER!!!</h4>
+              <button type="button" onClick={playAgain}>Play Again</button>
+            </>
           )}
-        </div> */}
+        </div>
       </div>
     </div>
   )

@@ -1,4 +1,3 @@
-import { isLabelWithInternallyDisabledControl } from '@testing-library/user-event/dist/utils';
 import { useEffect, useState } from 'react';
 import './Wordle.css';
 
@@ -96,7 +95,6 @@ const Wordle = () => {
 
     if (isValidGuess) {
       const result = guess.split('').map((letter, i) => {
-        console.log(word[i], letter);
         if (word[i].toUpperCase() === letter.toUpperCase()) {
           newKeys = findInKeys(letter, 'green', newKeys);
           return { color: 'green', letter };
