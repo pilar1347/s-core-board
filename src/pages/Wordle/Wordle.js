@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import './Wordle.css';
+import './Wordle.scss';
 
 const defaultKeyboard = [
   [
@@ -48,13 +48,20 @@ const findInKeys = (letter, color, keys) => {
 }
 
 const Wordle = () => {
-  const [guess, setGuess] = useState('');
+  const [guess, _setGuess] = useState('');
   const [error, setError] = useState('');
   const [word, setWord] = useState([]);
   const [wordList, setWordList] = useState([]);
   const [boardData, setBoardData] = useState([]);
   const [keyboard, setKeyboard] = useState(defaultKeyboard);
   const [isWinner, setIsWinner] = useState(false);
+
+  const setGuess = word => {
+    if (error) {
+      setError('');
+    }
+    _setGuess(word);
+  }
 
   useEffect(() => {
     const fetchWords = async () => {
@@ -70,16 +77,9 @@ const Wordle = () => {
     fetchWords();
   }, []);
 
-  const updateGuess = e => {
-    if (error) {
-      setError('');
-    }
-    setGuess(e.target.value);
-  }
-
   const makeGuess = e => {
     e.preventDefault();
-    const isWord = wordList.includes(guess.toLowerCase());
+    const isWord = wordList.includes(guess.toUpperCase());
     const isValidGuess = /[a-zA-Z]{5}/.test(guess) && isWord;
     let newKeys = keyboard.slice();
 
@@ -123,9 +123,14 @@ const Wordle = () => {
     window.location.reload();
   }
 
+  const typeLetter = letter => {
+    if (guess.length >= 5) return;
+    setGuess(`${guess}${letter}`);
+  }
+
   return (
     <div className="wordle">
-      <p>Wordle</p>
+      <h1>Wordle</h1>
       <div className="board-wrap">
         <div className="board">
           {boardData.map((row, i) => {
@@ -143,8 +148,7 @@ const Wordle = () => {
             <>
               <div className="row">
                 <form onSubmit={makeGuess}>
-                  <input maxLength="5" type="text" value={guess} onChange={updateGuess} />
-                  <button disabled={guess.length < 5} type="submit">Submit</button>
+                  <input maxLength="5" type="text" value={guess} onChange={e => setGuess(e.target.value)} />
                 </form>
               </div>
               <div className="error">
@@ -154,11 +158,13 @@ const Wordle = () => {
                 {keyboard.map((row, i) => {
                   return (
                     <div className="row" key={`row-${i}`}>
+                      {i === 2 && <div key="clear" className="cell gray long-btn" onClick={() => setGuess('')}>CLR</div>}
                       {row.map((item, j) => {
                         return (
-                          <div key={`cell-${i}-${j}`} className={`cell ${item.color}`}>{item.letter}</div>
+                          <div key={`cell-${i}-${j}`} className={`cell ${item.color}`} onClick={() => typeLetter(item.letter)}>{item.letter}</div>
                         )
                       })}
+                      {i === 2 && <div key="enter" className="cell gray long-btn" onClick={makeGuess}>GO</div>}
                     </div>
                   )
                 })}
@@ -177,6 +183,5 @@ const Wordle = () => {
 // button to show _ _ R _ E
 // select num of letters
 // how to make everyone have same solution each day?
-// a cron job?
 
 export default Wordle;

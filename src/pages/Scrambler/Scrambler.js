@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import './Scrambler.css';
+import './Scrambler.scss';
 
 const MAX_PER_LENGTH = 3;
 
@@ -100,10 +100,14 @@ const getGameInfo = async () => {
 
 const Scrambler = () => {
   const [letters, setLetters] = useState([]);
-  const [trayLetters, setTrayLetters] = useState([]);
+  const [trayLetters, _setTrayLetters] = useState([]);
   const [board, setBoard] = useState([]);
   const [error, setError] = useState('');
   const [isWinner, setIsWinner] = useState(false);
+
+  const setTrayLetters = arr => {
+    _setTrayLetters(arr);
+  };
 
   useEffect(() => {
     const setupGame = async () => {
@@ -157,6 +161,7 @@ const Scrambler = () => {
   const tryWord = () => {
     clearError();
     const word = trayLetters.join('');
+    console.log('try', word, board);
     let isCorrect = false;
 
     const newBoard = board.map(wordGroup => {
@@ -177,7 +182,6 @@ const Scrambler = () => {
       return wordGroup;
     });
     setBoard(newBoard);
-    console.log(board);
 
     if (isCorrect) {
       clearTray();
@@ -200,14 +204,29 @@ const Scrambler = () => {
       // TODO: Is in word list? Is too short? etc
       setError('Nope');
     }
+  }
 
+  const matchTrayToInput = e => {
+    const typedLetter = e.key.toUpperCase();
+    if (typedLetter === 'ENTER') {
+      tryWord();
+      return;
+    }
+    if (typedLetter === 'BACKSPACE') {
+      removeFromTray(trayLetters.length - 1);
+      return;
+    }
+    const ltrIndex = letters.indexOf(typedLetter);
+    if (ltrIndex >= 0) {
+      moveToTray(ltrIndex);
+    }
   }
 
   return (
-    <div className="wrapper">
-      <p>Scrambler</p>
+    <div className="wrapper scrambler">
+      <h1>Scrambler</h1>
       <div className="board-wrap">
-        <div className="board board-col">
+        <div className="board">
           <div className="column">
             {board && board.length && board.map(item => {
               const { words, length } = item;
@@ -225,17 +244,18 @@ const Scrambler = () => {
             })}
           </div>
         </div>
-        <div className="board board-letter">
+        <div className="letter-rows">
           <div className="row">
             <div className="tray">
+              <input type="text" className="answerInput" maxLength={5} onKeyDown={matchTrayToInput} />
               {trayLetters.map((ltr, i) => (
                 <div className="letter" key={`letterblock-${i}`} onClick={() => removeFromTray(i)}>
                   {ltr}
                 </div>
               ))}
             </div>
-            <button type="button" className="submit-btn" onClick={tryWord}>Go</button>
-            <button type="button" className="submit-btn" onClick={clearTray}>C</button>
+            <button type="button" className="action-btn" onClick={tryWord}>Go</button>
+            <button type="button" className="action-btn" onClick={clearTray}>CLR</button>
           </div>
           <div className="row">
             <div className="tray bottom-tray">
@@ -243,9 +263,9 @@ const Scrambler = () => {
                 <div className="letter" key={`letterblock-${i}`} onClick={() => moveToTray(i)}>
                   {ltr}
                 </div>
-              ))}              
+              ))}
             </div>
-            <button type="button" className="submit-btn" onClick={shuffleLetters}>%</button>
+            <button type="button" className="action-btn" onClick={shuffleLetters}>SHUFFLE</button>
           </div>
         </div>
         <div className="board">

@@ -1,0 +1,130 @@
+.scrambler {
+  .board-wrap {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .board {
+    max-width: 1000px;
+    column-count: 2;
+    margin: 0 auto;
+  }
+
+  .column {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    flex: 0 1 50%;
+  }
+
+  .row {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    padding: 10px 20px;
+    justify-content: flex-start;
+  }
+
+  .letter-rows {
+    display: flex;
+    flex-direction: column;
+    margin: 15px auto;
+    width: 100%;
+    max-width: 550px;
+    justify-content: center;
+    .row {
+      justify-content: flex-start;
+    }
+  }
+
+  .blank {
+    border-bottom: 1px solid gray;
+    width: 50px;
+    height: 50px;
+    font-size: 50px;
+    margin: 0 5px;
+    text-transform: uppercase;
+    padding: 5px;
+    line-height: 1;
+  }
+
+  .letter {
+    font-size: 50px;
+    text-transform: uppercase;
+    min-width: 70px;
+    padding: 5px 10px;
+    background: beige;
+    margin: 0 5px;
+    border-radius: 4px;
+    border: 1px solid burlywood;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+    transition: all 0.3s cubic-bezier(.25,.8,.25,1);
+    cursor: pointer;
+    z-index: 2;
+  }
+
+  .letter:hover {
+    box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+  }
+
+  .tray {
+    background: brown;
+    height: 100px;
+    width: 500px;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    padding: 0 10px;
+    flex: 0 0 500px;
+    position: relative;
+  }
+
+  .answerInput {
+    width: 480px;
+    border: 0;
+    background: transparent;
+    height: 100px;
+    font-size: 22px;
+    text-transform: uppercase;
+    position: absolute;
+    color: transparent;
+    z-index: 1;
+    &:focus {
+      border: none;
+    }
+  }
+
+  button {
+    padding: 10px 15px;
+    background: lightskyblue;
+    color: black;
+    border: 0;
+    font-size: 18px;
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+
+  button:disabled {
+    opacity: 0.5;
+    pointer-events: none;
+  }
+
+  .action-btn {
+    width: auto;
+    color: white;
+    font-weight: bold;
+    font-size: 20px;
+    text-align: center;
+    padding: 10px 10px;
+    align-self: center;
+    margin-left: 10px;
+    border-radius: 3px;
+    cursor: pointer;
+  }
+
+  .error {
+    font-size: 18px;
+    color: darkred;
+    font-weight: bold;
+  }  
+}

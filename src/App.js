@@ -2,7 +2,7 @@ import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import Wordle from './pages/Wordle';
 import Scrambler from './pages/Scrambler';
 import Home from './pages/Home';
-import './App.css';
+import './App.scss';
 
 function App() {
   return (

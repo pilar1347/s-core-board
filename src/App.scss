@@ -1,0 +1,27 @@
+* {
+  box-sizing: border-box;
+}
+
+.App {
+  text-align: center;
+  --lightgray: #c9c9c9;
+  --gray: #999999;
+  --darkgray: #363636;
+}
+
+.App-header {
+  background-color: #282c34;
+  height: 60px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-end;
+  font-size: calc(10px + 2vmin);
+  color: white;
+  padding: 0 15px;
+}
+
+.App-link {
+  color: #61dafb;
+  margin: 0 10px;
+}
