@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import './Scrambler.scss';
 
-const MAX_PER_LENGTH = 3;
+const MAX_PER_LENGTH = 4;
 
 const getRandomElFromArray = arr => arr[Math.floor(Math.random() * arr.length)];
 
@@ -100,14 +100,11 @@ const getGameInfo = async () => {
 
 const Scrambler = () => {
   const [letters, setLetters] = useState([]);
-  const [trayLetters, _setTrayLetters] = useState([]);
+  const [trayLetters, setTrayLetters] = useState([]);
   const [board, setBoard] = useState([]);
   const [error, setError] = useState('');
   const [isWinner, setIsWinner] = useState(false);
-
-  const setTrayLetters = arr => {
-    _setTrayLetters(arr);
-  };
+  const [guessedWords, setGuessedWords] = useState([]);
 
   useEffect(() => {
     const setupGame = async () => {
@@ -161,7 +158,6 @@ const Scrambler = () => {
   const tryWord = () => {
     clearError();
     const word = trayLetters.join('');
-    console.log('try', word, board);
     let isCorrect = false;
 
     const newBoard = board.map(wordGroup => {
@@ -201,7 +197,14 @@ const Scrambler = () => {
         setIsWinner(true);
       }
     } else {
+      if (word.length < 4) {
+        setError('Too short');
+        return;
+      }
       // TODO: Is in word list? Is too short? etc
+      if (!guessedWords.includes(word)) {
+        setGuessedWords([...guessedWords, word]);
+      }
       setError('Nope');
     }
   }
@@ -212,7 +215,7 @@ const Scrambler = () => {
       tryWord();
       return;
     }
-    if (typedLetter === 'BACKSPACE') {
+    if (typedLetter === 'BACKSPACE' && trayLetters.length > 0) {
       removeFromTray(trayLetters.length - 1);
       return;
     }
@@ -222,27 +225,44 @@ const Scrambler = () => {
     }
   }
 
+  const revealAll = () => {
+    setBoard(board.map(wordSet => {
+      return {
+        ...wordSet,
+        words: wordSet.words.map(word => {
+          return {
+            ...word,
+            letters: word.letters.map(letter => ({
+              ...letter,
+              solved: true
+            }))
+          }
+        })
+      };
+    }));
+  }
+
   return (
     <div className="wrapper scrambler">
       <h1>Scrambler</h1>
       <div className="board-wrap">
         <div className="board">
-          <div className="column">
-            {board && board.length && board.map(item => {
-              const { words, length } = item;
-              return words && words.length && words.map(({ letters }, i) => {
-                return (
-                  <div className="row" key={`row-${length}-${i}`}>
+          {board && board.length && board.map(item => {
+            const { words, length } = item;
+            return words && words.length && words.map(({ letters }, i) => {
+              return (
+                <div className="row-wrap" key={`row-${length}-${i}`}>
+                  <div className="row">
                     {letters.map(({ letter, solved }, j) => (
                       <div className="blank" key={`blank-${j}`}>
                         {solved && <>{letter}</>}
                       </div>
                     ))}
                   </div>
-                )
-              });
-            })}
-          </div>
+                </div>
+              )
+            });
+          })}
         </div>
         <div className="letter-rows">
           <div className="row">
@@ -268,18 +288,36 @@ const Scrambler = () => {
             <button type="button" className="action-btn" onClick={shuffleLetters}>SHUFFLE</button>
           </div>
         </div>
-        <div className="board">
-          {!isWinner ? (
-            <div className="error">
-              {error}
+        {!isWinner ? (
+          <div className="error">
+            {error}
+          </div>
+        ) : (
+          <>
+            <h2>WINNER!!!</h2>
+            <button type="button" onClick={playAgain}>Play Again</button>
+          </>
+        )}
+      </div>
+      <div className="text">
+        {guessedWords.length ? <h2>Guessed Words</h2> : null}
+        {guessedWords.map(word => {
+          return (
+            <div key={word}>
+              {word}
             </div>
-          ) : (
-            <>
-              <h4>WINNER!!!</h4>
-              <button type="button" onClick={playAgain}>Play Again</button>
-            </>
-          )}
-        </div>
+          )
+        })}
+      </div>
+      <div className="text">
+        <h2>Rules</h2>
+        <ul>
+          <li>Make a guess of 4+ letters using only letters provided</li>
+          <li>Answer list is in alphabetical order grouped by word length</li>
+        </ul>
+      </div>
+      <div className="text">
+        <button type="button" onClick={revealAll}>I suck and I give up</button>
       </div>
     </div>
   )
