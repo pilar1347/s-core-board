@@ -1,7 +1,18 @@
 import { useEffect, useState } from 'react';
+import confetti from 'canvas-confetti';
 import './Scrambler.scss';
 
-const MAX_PER_LENGTH = 4;
+const MAX_PER_LENGTH = 10;
+const MIN_WORD_LENGTH = 3;
+
+// TODO: SCORing!
+// Show message if they already guessed something or its already on the board
+// Timer?
+// Clean this up - separate files and unit tests
+// Mobile view
+// drag and drop letters
+// Hints
+// should it clear all tray ltters on any guess?
 
 const getRandomElFromArray = arr => arr[Math.floor(Math.random() * arr.length)];
 
@@ -10,7 +21,7 @@ const removeLetterFromWordAtInd = (arr, ind) => arr.slice(0, ind) + arr.slice(in
 const createRandomArray = (arr, len) => {
   let tempArr = arr.slice();
   const result = [];
-  for(let i=0; i<len; i++) {
+  for (let i = 0; i < len; i++) {
     const el = getRandomElFromArray(tempArr);
     result.push(el);
     const ind = tempArr.indexOf(el);
@@ -21,7 +32,7 @@ const createRandomArray = (arr, len) => {
 
 const checkIfAnagram = (masterWord, word) => {
   let remaining = masterWord;
-  for(let i=0; i<word.length; i++) {
+  for (let i = 0; i < word.length; i++) {
     const letter = word[i];
     const ind = remaining.indexOf(letter);
     if (ind < 0) return false;
@@ -44,46 +55,40 @@ const getMatchingWords = (masterWord, words) => {
 }
 
 const sortedWords = arrays => {
-  return arrays.map(arr => arr.sort());
-}
+  return arrays.map(arr => arr.sort())
+};
 
 const getGameInfo = async () => {
-  const lens = [4,5,6];
+  const lens = [3, 4, 5, 6];
   const promises = lens.map(x => {
     return fetch(`./words/${x}.txt`)
       .then(r => r.text())
       .then(r => r.split('\n'));
   });
   return Promise.all(promises).then(result => {
-    const [four, five, six] = result;
+    const six = result[result.length - 1];
     const masterWord = getRandomElFromArray(six);
 
     const matchingWords = getMatchingWords(masterWord, result);
-    matchingWords[2].push(masterWord);
+    matchingWords[3].push(masterWord);
 
     const words = sortedWords(matchingWords);
 
     const board = words.reduce((acc, group) => {
-      if (group.length) {
-        const length = group[0].length;
-        acc.push({
-          length,
+      const newWords = group?.map(word => {
+        return {
           solved: false,
-          words: group.map(word => {
+          word,
+          letters: word.split('').map(letter => {
             return {
-              solved: false,
-              word,
-              letters: word.split('').map(letter => {
-                return {
-                  letter,
-                  solved: false
-                }
-              })
+              letter,
+              solved: false
             }
           })
-        })
-      }
-      return acc;
+        }
+      })
+
+      return [...acc, ...newWords];
     }, []);
 
     return {
@@ -93,10 +98,21 @@ const getGameInfo = async () => {
   });
 };
 
-// TODO: Points system
-// TODO: Shuffle button
-// TODO: Clear tray button
-// TODO: Click and drag to reorder in tray
+const fireConfetti = () => {
+  const canvas = document.createElement('canvas');
+  canvas.style.position = 'absolute';
+  canvas.style.top = '100px';
+  canvas.style.left = '10%';
+  canvas.style.width = '80%';
+  canvas.style.height = '800px';
+  document.body.appendChild(canvas);
+
+  const myConfetti = confetti.create(canvas);
+  myConfetti({
+    particleCount: 125,
+    spread: 160
+  })
+}
 
 const Scrambler = () => {
   const [letters, setLetters] = useState([]);
@@ -155,55 +171,75 @@ const Scrambler = () => {
     setTrayLetters([]);
   }
 
+  const renderBoard = board => {
+    const MAX_PER_COLUMN = 8;
+    const columnCount = Math.ceil(board.length / MAX_PER_COLUMN);
+    const colArray = Array.from(Array(columnCount).keys());
+    const rowArray = Array.from(Array(MAX_PER_COLUMN).keys());
+
+    let runningIndex = 0;
+    return colArray.map(colInd => {
+      return (
+        <div className="answer-column" key={`column-${colInd}`}>
+          {rowArray.map(rowInd => {
+            const el = (
+              <div className="answer-row" key={`row-${rowInd}`}>
+                {board?.[runningIndex]?.letters?.map(({ letter, solved }, j) => (
+                  <div className="blank" key={`blank-${j}`}>
+                    {solved && <>{letter}</>}
+                  </div>
+                ))}
+              </div>
+            );
+            runningIndex += 1;
+            return el;
+          })}
+        </div>
+      )
+    });
+  };
+
   const tryWord = () => {
     clearError();
-    const word = trayLetters.join('');
+    const guessedWord = trayLetters.join('');
     let isCorrect = false;
 
-    const newBoard = board.map(wordGroup => {
-      if (wordGroup.length === word.length) {
-        const words = wordGroup.words.map(wordData => {
-          if (word.toUpperCase() === wordData.word.toUpperCase()) {
-            isCorrect = true;
-            return {
-              ...wordData,
-              solved: true,
-              letters: wordData.letters.map(x => ({ ...x, solved: true }))
-            }
-          }
-          return wordData;
-        });
-        return { ...wordGroup, words };
+    const newBoard = board.map(wordData => {
+      if (guessedWord.toUpperCase() === wordData.word.toUpperCase()) {
+        isCorrect = true;
+        return {
+          ...wordData,
+          solved: true,
+          letters: wordData.letters.map(x => ({ ...x, solved: true }))
+        }
       }
-      return wordGroup;
+      return wordData;
     });
+
     setBoard(newBoard);
 
     if (isCorrect) {
       clearTray();
-      
+
       let winnerCheck = true;
-      for (let i=0; i<newBoard.length; i++) {
-        const wordGroup = newBoard[i];
-        for (let j=0; j<wordGroup.words.length; j++) {
-          const word = wordGroup.words[j];
-          if (!word.solved) {
-            winnerCheck = false;
-            break;
-          }
+      for (let i = 0; i < newBoard.length; i++) {
+        const word = newBoard[i];
+        if (!word.solved) {
+          winnerCheck = false;
+          break;
         }
       }
       if (winnerCheck) {
         setIsWinner(true);
+        fireConfetti();
       }
     } else {
-      if (word.length < 4) {
+      if (guessedWord.length < MIN_WORD_LENGTH) {
         setError('Too short');
         return;
       }
-      // TODO: Is in word list? Is too short? etc
-      if (!guessedWords.includes(word)) {
-        setGuessedWords([...guessedWords, word]);
+      if (!guessedWords.includes(guessedWord)) {
+        setGuessedWords([...guessedWords, guessedWord]);
       }
       setError('Nope');
     }
@@ -226,19 +262,15 @@ const Scrambler = () => {
   }
 
   const revealAll = () => {
-    setBoard(board.map(wordSet => {
+    setBoard(board.map(wordData => {
       return {
-        ...wordSet,
-        words: wordSet.words.map(word => {
-          return {
-            ...word,
-            letters: word.letters.map(letter => ({
-              ...letter,
-              solved: true
-            }))
-          }
-        })
-      };
+        ...wordData,
+        solved: true,
+        letters: wordData.letters.map(letter => ({
+          ...letter,
+          solved: true
+        }))
+      }
     }));
   }
 
@@ -247,22 +279,7 @@ const Scrambler = () => {
       <h1>Scrambler</h1>
       <div className="board-wrap">
         <div className="board">
-          {board && board.length && board.map(item => {
-            const { words, length } = item;
-            return words && words.length && words.map(({ letters }, i) => {
-              return (
-                <div className="row-wrap" key={`row-${length}-${i}`}>
-                  <div className="row">
-                    {letters.map(({ letter, solved }, j) => (
-                      <div className="blank" key={`blank-${j}`}>
-                        {solved && <>{letter}</>}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )
-            });
-          })}
+          {renderBoard(board)}
         </div>
         <div className="letter-rows">
           <div className="row">
@@ -312,7 +329,7 @@ const Scrambler = () => {
       <div className="text">
         <h2>Rules</h2>
         <ul>
-          <li>Make a guess of 4+ letters using only letters provided</li>
+          <li>Make a guess of {MIN_WORD_LENGTH}+ letters using only letters provided</li>
           <li>Answer list is in alphabetical order grouped by word length</li>
         </ul>
       </div>

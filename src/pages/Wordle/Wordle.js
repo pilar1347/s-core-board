@@ -32,13 +32,16 @@ const Wordle = () => {
   useEffect(() => {
     const fetchWords = async () => {
       fetch('./words/5.txt')
-      .then(r => r.text())
-      .then(text => {
-        const words = text.split('\n');
-        setWordList(words);
-        const word = words[Math.floor(Math.random() * words.length)];
-        setWord(word);
-      })
+        .then(r => r.text())
+        .then(text => {
+          const words = text.split('\n').filter(w => {
+            if (w.endsWith('S')) return false;
+            return true;
+          });
+          setWordList(words);
+          const word = words[Math.floor(Math.random() * words.length)];
+          setWord(word);
+        })
     }
     fetchWords();
   }, []);
@@ -77,7 +80,7 @@ const Wordle = () => {
       setBoardData([...boardData, result]);
       setKeyboard(newKeys);
 
-      if (word.toUpperCase() === guess.toUpperCase()){
+      if (word.toUpperCase() === guess.toUpperCase()) {
         setIsWinner(true);
       }
 
