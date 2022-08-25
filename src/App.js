@@ -1,24 +1,36 @@
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import { ThemeProvider } from 'styled-components';
 import Wordle from './pages/Wordle';
 import Scrambler from './pages/Scrambler';
 import Home from './pages/Home';
 import './App.scss';
+import Escape from './pages/Escape/Escape';
+import EscapeGame from './pages/Escape/EscapeGame';
+
+const theme = {
+  border: '1px solid #cdcdcd'
+};
 
 function App() {
   return (
-    <Router>
-      <div className="App">
-        <header className="App-header">
-          <Link className="App-link" to="/wordle">Wordle</Link>
-          <Link className="App-link" to="/scrambler">Scrambler</Link>
-        </header>
-        <Routes>
-          <Route path="/wordle" element={<Wordle />} />
-          <Route path="/scrambler" element={<Scrambler />} />
-          <Route exact path="/" element={<Home />} />
-        </Routes>
-      </div>
-    </Router>
+    <ThemeProvider theme={theme}>
+      <Router>
+        <div className="App">
+          <header className="App-header">
+            <Link className="App-link" to="/wordle">Wordle</Link>
+            <Link className="App-link" to="/scrambler">Scrambler</Link>
+            <Link className="App-link" to="/escape">Escape</Link>
+          </header>
+          <Routes>
+            <Route path="/wordle" element={<Wordle />} />
+            <Route path="/scrambler" element={<Scrambler />} />
+            <Route path="/escape" element={<Escape />} />
+            <Route path="/escape/game" element={<EscapeGame />} />
+            <Route exact path="/" element={<Home />} />
+          </Routes>
+        </div>
+      </Router>
+    </ThemeProvider>
   );
 }
 
