@@ -29,6 +29,12 @@ export const InvItem = styled.div`
   height: 80px;
   display: inline-block;
   text-align: center;
+  cursor: pointer;
+  border: 2px solid transparent;
+
+  &.selected {
+    border: 2px solid orange;
+  }
 
   div {
     font-size: 13px;
