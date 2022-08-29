@@ -162,7 +162,7 @@ const Visuals = ({ addInventory, selectedItem, removeInventory, updateGameState,
         {video && (
           <>
             <video controls autoPlay playsInline>
-              <source src={`videos/${video}`} type="video/mp4" />
+              <source src={`${fastly}/core-hackathon-demo/${video}`} type="video/mp4" />
             </video>
             <CloseVideo onClick={closeVideo}>Close</CloseVideo>
           </>
