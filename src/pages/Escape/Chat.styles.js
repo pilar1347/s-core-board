@@ -42,5 +42,7 @@ export const ChatMessages = styled.div`
   }
   .botMessage {
     color: #2b0557;
+    font-size: 12px;
+    font-famiy: monospace;
   }
 `;

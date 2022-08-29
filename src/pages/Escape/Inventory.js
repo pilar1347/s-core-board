@@ -19,7 +19,6 @@ const Inventory = ({ user, socket, selectedItem = {}, setSelectedItem }) => {
       setItems((prevItems) => {
         return prevItems.filter(x => x.name !== item.name)
       });
-      console.log('removing and sel', selectedItem, item);
       if (selectedItem && selectedItem.name === item.name) {
         setSelectedItem(null);
       }

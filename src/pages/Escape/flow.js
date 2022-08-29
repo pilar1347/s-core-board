@@ -587,7 +587,12 @@ const flow = {
     back: 'start',
     hotSpots: [
       {
-        location: 'circuit',
+        location: {
+          breaker: {
+            true: 'openCircuitBreaker',
+            false: 'circuit'
+          }
+        },
         coords: {
           x: 37,
           y: 4,
@@ -610,7 +615,8 @@ const flow = {
           Rock: {
             video: 'video-smashCircuitBreaker.mp4',
             location: 'openCircuitBreaker',
-            removeFromInventory: true
+            removeFromInventory: true,
+            gameState: 'breaker'
           },
           Key: {
             text: 'That doesn\'t work here dummy'

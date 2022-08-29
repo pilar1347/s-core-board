@@ -8,15 +8,16 @@ export const Screen = styled.div`
   bottom: 120px;
 
   img {
-    max-width: 100%;
-    max-height: 100%;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
   }
 
   > div {
     position: relative;
     margin: 0 auto;
-    height: 100%;
     display: inline-block;
+    height: 100%;
   }
 
   canvas {
@@ -37,7 +38,7 @@ export const Screen = styled.div`
 
 const overlay = `
   position: absolute;
-  background: rgba(255,255,255,0.25);
+  background: rgba(0,0,0,0.25);
   cursor: pointer;
 `;
 

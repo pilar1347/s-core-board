@@ -19,6 +19,10 @@ const EscapeGame = () => {
       triggered: false,
       message: 'Power is on'
     },
+    breaker: {
+      triggered: false,
+      message: 'Circuit breaker is open'
+    },
     door: {
       triggered: false,
       message: 'Door is open'

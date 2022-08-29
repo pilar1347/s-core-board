@@ -127,7 +127,7 @@ const Visuals = ({ addInventory, selectedItem, removeInventory, updateGameState,
   }
 
   return (
-    <Screen>
+    <Screen className="screen">
       <div>
         <img ref={imageRef} src={`${fastly}/core-hackathon-demo/${step.still}`} alt={step.still} />
         <Canvas
@@ -162,7 +162,7 @@ const Visuals = ({ addInventory, selectedItem, removeInventory, updateGameState,
         {video && (
           <>
             <video controls autoPlay playsInline>
-              <source src={`${fastly}/core-hackathon-demo/${video}`} type="video/mp4" />
+              <source src={`videos/${video}`} type="video/mp4" />
             </video>
             <CloseVideo onClick={closeVideo}>Close</CloseVideo>
           </>
