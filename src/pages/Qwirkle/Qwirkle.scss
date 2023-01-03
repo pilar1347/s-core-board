@@ -1,0 +1,21 @@
+.wrapper {
+  display: flex;
+  width: 100%;
+  padding-top: 50px;
+  align-items: center;
+  justify-content: center;
+}
+
+.tile {
+  width: 100px;
+  height: 100px;
+  background: #3c3c3c;
+  display: flex;
+  align-items: cent
+
+  svg {
+    width: 90%;
+    height: 90%;
+    fill: white;
+  }
+}
