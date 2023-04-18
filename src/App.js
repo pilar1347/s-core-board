@@ -4,8 +4,8 @@ import Wordle from './pages/Wordle';
 import Scrambler from './pages/Scrambler';
 import Home from './pages/Home';
 import './App.scss';
-// import Escape from './pages/Escape/Escape';
-// import EscapeGame from './pages/Escape/EscapeGame';
+import Escape from './pages/Escape/Escape';
+import EscapeGame from './pages/Escape/EscapeGame';
 import Picross from './pages/Picross';
 import Qwirkle from './pages/Qwirkle';
 
@@ -26,7 +26,7 @@ function App() {
             <div>
               <Link className="App-link" to="/wordle">Wordle</Link>
               <Link className="App-link" to="/scrambler">Scrambler</Link>
-              {/* <Link className="App-link" to="/escape">Escape</Link> */}
+              <Link className="App-link" to="/escape">Escape</Link>
               <Link className="App-link" to="/picross">Picross</Link>
               <Link className="App-link" to="/qwirkle">Qwirkle</Link>              
             </div>
@@ -34,8 +34,8 @@ function App() {
           <Routes>
             <Route path="/wordle" element={<Wordle />} />
             <Route path="/scrambler" element={<Scrambler />} />
-            {/* <Route path="/escape" element={<Escape />} /> */}
-            {/* <Route path="/escape/game" element={<EscapeGame />} /> */}
+            <Route path="/escape" element={<Escape />} />
+            <Route path="/escape/game" element={<EscapeGame />} />
             <Route path="/picross" element={<Picross />} />
             <Route path="/qwirkle" element={<Qwirkle />} />
             <Route exact path="/" element={<Home />} />
