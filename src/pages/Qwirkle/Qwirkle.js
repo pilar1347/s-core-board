@@ -9,7 +9,7 @@ const Qwirkle = () => {
 
   return (
     <div className="wrapper">
-      Game
+      Yea, this doesn't work yet.
       <div className="tile">
         <Star />
       </div>

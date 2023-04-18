@@ -277,6 +277,13 @@ const Scrambler = () => {
   return (
     <div className="wrapper scrambler">
       <h1>Scrambler</h1>
+      <div className="text">
+        <h2>Rules</h2>
+        <ul>
+          <li>Make a guess of {MIN_WORD_LENGTH}+ letters using only letters provided</li>
+          <li>Answer list is in alphabetical order grouped by word length</li>
+        </ul>
+      </div>
       <div className="board-wrap">
         <div className="board">
           {renderBoard(board)}
@@ -325,13 +332,6 @@ const Scrambler = () => {
             </div>
           )
         })}
-      </div>
-      <div className="text">
-        <h2>Rules</h2>
-        <ul>
-          <li>Make a guess of {MIN_WORD_LENGTH}+ letters using only letters provided</li>
-          <li>Answer list is in alphabetical order grouped by word length</li>
-        </ul>
       </div>
       <div className="text">
         <button type="button" onClick={revealAll}>I suck and I give up</button>

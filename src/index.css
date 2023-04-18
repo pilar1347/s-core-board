@@ -1,3 +1,12 @@
+
+:root {
+  --color-pink: #FF4E80;
+  --color-purple: #38347D;
+  --color-purple-dark: #06005C;
+  --color-grey: #333;
+  --color-grey-light: #c9c9c9;
+}
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',

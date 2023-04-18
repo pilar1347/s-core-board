@@ -1,6 +1,15 @@
+import './Home.scss';
+
 const Home = () => {
   return (
-    <div>Home</div>
+    <div>
+      <div className="logo-wrapper">
+        <img src="/scoreboard-logo.png" alt="Scoreboard Logo" />
+      </div>
+      <div className="hero-wrapper">
+        <img src="/HandlebarsBen.png" alt="Tyler and Ben Are Happy" />
+      </div>
+    </div>
   )
 };
 

@@ -1,4 +1,8 @@
 .wordle {
+  h1 {
+    color: var(--color-purple);
+  }
+
   .board-wrap {
     display: flex;
     justify-content: center;
@@ -34,8 +38,8 @@
   }
 
   .cell {
-    width: 100px;
-    height: 100px;
+    width: 60px;
+    height: 60px;
     margin: 5px;
     text-transform: uppercase;
     font-size: 30px;
@@ -58,12 +62,12 @@
   }
 
   .gray {
-    background-color: var(--gray);
+    background-color: #cfcfcf;
   }
 
   .darkgray {
-    background-color: var(--darkgray);
-    color: white;
+    background-color: #636363;
+    color: #cfcfcf;
   }
 
   .keyboard {
@@ -71,10 +75,10 @@
   }
 
   .keyboard .cell {
-    width: 30px;
+    width: 35px;
     height: 40px;
     cursor: pointer;
-    margin: 5px;
+    margin: 2px;
     padding: 5px;
     border: 1px solid transparent;
   }

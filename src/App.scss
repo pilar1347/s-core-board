@@ -10,18 +10,35 @@
 }
 
 .App-header {
-  background-color: #282c34;
+  background-color: var(--color-grey);
   height: 60px;
   display: flex;
   flex-direction: row;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: space-between;
   font-size: calc(10px + 2vmin);
   color: white;
   padding: 0 15px;
 }
 
+.header-logo {
+  display: flex;
+  justify-content: center;
+  color: white;
+  text-decoration: none;
+
+  img {
+    height: 35px;
+    margin-right: 5px;
+  }
+}
+
 .App-link {
-  color: #61dafb;
+  color: var(--color-pink);
+  text-decoration: none;
   margin: 0 10px;
+
+  &:hover {
+    filter: brightness(0.8);
+  }
 }

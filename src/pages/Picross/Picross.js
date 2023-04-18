@@ -105,6 +105,7 @@ const Picross = () => {
   return (
     <>
       <div className="controls">
+        <p>This is in progress...</p>
         <button onClick={() => setValidated(!validated)}>
           {validated ? 'Hide Answers' : 'Check'}
         </button>
