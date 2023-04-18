@@ -1,7 +1,7 @@
 .scrambler {
   h1 {
     margin: 0;
-    color: var(--color-purple);
+    color: var(--color-purple-light);
   }
 
   display: flex;
@@ -76,7 +76,7 @@
   }
 
   .tray {
-    background: var(--color-purple);
+    background: var(--color-purple-light);
     height: 100px;
     width: 500px;
     display: flex;
