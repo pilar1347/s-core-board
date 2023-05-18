@@ -58,7 +58,7 @@ const Wordle = () => {
     }
 
     if (!isValidGuess) {
-      setError('Guess in invalid. Try again.');
+      setError('Guess is invalid. Try again.');
       return;
     }
 
