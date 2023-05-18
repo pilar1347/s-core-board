@@ -3,7 +3,7 @@ import confetti from 'canvas-confetti';
 import './Scrambler.scss';
 
 const MAX_WORDS_PER_LENGTH = 10;
-const MIN_WORD_LENGTH = 3;
+const MIN_LETTER_LENGTH = 3;
 
 // TODO: SCORing!
 // Show message if they already guessed something or its already on the board
@@ -234,7 +234,7 @@ const Scrambler = () => {
         fireConfetti();
       }
     } else {
-      if (guessedWord.length < MIN_WORD_LENGTH) {
+      if (guessedWord.length < MIN_LETTER_LENGTH) {
         setError('Too short');
         return;
       }
@@ -280,7 +280,7 @@ const Scrambler = () => {
       <div className="text">
         <h2>Rules</h2>
         <ul>
-          <li>Make a guess of {MIN_WORD_LENGTH}+ letters using only letters provided</li>
+          <li>Make a guess of {MIN_LETTER_LENGTH}+ letters using only letters provided</li>
           <li>Answer list is in alphabetical order grouped by word length</li>
         </ul>
       </div>
