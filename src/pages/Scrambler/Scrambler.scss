@@ -59,7 +59,7 @@
   .letter {
     font-size: 50px;
     text-transform: uppercase;
-    min-width: 70px;
+    min-width: 65px;
     padding: 5px 10px;
     background: beige;
     margin: 0 5px;
@@ -85,6 +85,7 @@
     padding: 0 10px;
     flex: 0 0 500px;
     position: relative;
+    flex-direction: row;
   }
 
   .answerInput {
