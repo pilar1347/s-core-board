@@ -31,11 +31,12 @@ const Wordle = () => {
 
   useEffect(() => {
     const fetchWords = async () => {
-      fetch('./words/5car.txt')
+      fetch('./words/car.txt')
         .then(r => r.text())
         .then(text => {
           const words = text.split('\n').filter(w => {
             if (w.endsWith('S')) return false;
+            if (w.length !== 5) return false;
             return true;
           });
           setWordList(words);
