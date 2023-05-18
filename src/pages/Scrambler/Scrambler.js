@@ -2,8 +2,8 @@ import { useEffect, useState } from 'react';
 import confetti from 'canvas-confetti';
 import './Scrambler.scss';
 
-const MAX_PER_LENGTH = 10;
-const MIN_WORD_LENGTH = 3;
+const MAX_WORDS_PER_LENGTH = 10;
+const MIN_LETTER_LENGTH = 3;
 
 // TODO: SCORing!
 // Show message if they already guessed something or its already on the board
@@ -47,8 +47,8 @@ const getMatchingWords = (masterWord, words) => {
       if (word === masterWord) return false;
       return checkIfAnagram(masterWord, word);
     });
-    if (fitting.length > MAX_PER_LENGTH) {
-      fitting = createRandomArray(fitting, MAX_PER_LENGTH);
+    if (fitting.length > MAX_WORDS_PER_LENGTH) {
+      fitting = createRandomArray(fitting, MAX_WORDS_PER_LENGTH);
     }
     return fitting;
   });
