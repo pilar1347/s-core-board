@@ -60,11 +60,16 @@ const sortedWords = arrays => {
 
 const getGameInfo = async () => {
   const lens = [3, 4, 5, 6];
-  const promises = lens.map(x => {
-    return fetch(`./words/${x}car.txt`)
-      .then(r => r.text())
-      .then(r => r.split('\n'));
-  });
+  const targetFile = './words/car.txt';
+
+  return fetch(targetFile)
+    .then(r => r.text())
+    .then(r => {
+      const words = r.split('\n');
+      const filteredWords = words.filter(word => lens.includes(word.length));
+      return filteredWords;
+    });
+}
   return Promise.all(promises).then(result => {
     const six = result[result.length - 1];
     const masterWord = getRandomElFromArray(six);
