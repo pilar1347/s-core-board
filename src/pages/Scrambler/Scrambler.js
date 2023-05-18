@@ -61,7 +61,7 @@ const sortedWords = arrays => {
 const getGameInfo = async () => {
   const lens = [3, 4, 5, 6];
   const promises = lens.map(x => {
-    return fetch(`./words/${x}.txt`)
+    return fetch(`./words/${x}car.txt`)
       .then(r => r.text())
       .then(r => r.split('\n'));
   });
