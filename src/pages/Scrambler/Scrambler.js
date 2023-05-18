@@ -3,7 +3,7 @@ import confetti from 'canvas-confetti';
 import './Scrambler.scss';
 
 const MAX_WORDS_PER_LENGTH = 10;
-const MIN_LETTER_LENGTH = 3;
+const MIN_WORD_LENGTH = 3;
 
 // TODO: SCORing!
 // Show message if they already guessed something or its already on the board
