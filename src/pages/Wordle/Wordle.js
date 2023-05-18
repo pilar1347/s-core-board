@@ -31,7 +31,7 @@ const Wordle = () => {
 
   useEffect(() => {
     const fetchWords = async () => {
-      fetch('./words/5.txt')
+      fetch('./words/5car.txt')
         .then(r => r.text())
         .then(text => {
           const words = text.split('\n').filter(w => {
